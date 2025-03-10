@@ -1,5 +1,3 @@
-// src/components/Select/ErrorMessage.tsx
-
 import React from 'react';
 
 interface ErrorMessageProps {

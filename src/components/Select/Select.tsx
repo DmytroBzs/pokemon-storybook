@@ -27,19 +27,22 @@ const Select: React.FC = () => {
     getPokemons();
   }, []);
 
+  const searchTerm = debouncedSearch;
+
   useEffect(() => {
-    if (debouncedSearch) {
-      const filtered = pokemons.filter(pokemon =>
-        pokemon.name.toLowerCase().includes(debouncedSearch.toLowerCase())
+    const allPokemons = pokemons;
+
+    if (searchTerm) {
+      const filtered = allPokemons.filter(pokemon =>
+        pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredPokemons(filtered);
     } else {
-      setFilteredPokemons(pokemons);
+      setFilteredPokemons(allPokemons);
     }
-  }, [debouncedSearch, pokemons]);
+  }, [searchTerm, pokemons]);
 
   const handleSelect = (pokemon: Pokemon) => {
-    // Якщо покемон уже в списку, не додаємо
     if (selectedPokemons.some(p => p.name === pokemon.name)) {
       setError('This Pokémon is already selected');
       return;
@@ -61,7 +64,7 @@ const Select: React.FC = () => {
   return (
     <div className="w-full max-w-xs mx-auto">
       <TrainerForm onValidationChange={setIsTrainerValid} />
-      <SearchInput search={search} setSearch={setSearch} />
+      <SearchInput onSearchChange={setSearch} />
       <PokemonList
         pokemons={filteredPokemons}
         handleSelect={

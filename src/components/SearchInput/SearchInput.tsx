@@ -1,19 +1,30 @@
 import React from 'react';
+import { useForm } from 'react-hook-form';
 
 interface SearchInputProps {
-  search: string;
-  setSearch: React.Dispatch<React.SetStateAction<string>>;
+  onSearchChange: (search: string) => void;
 }
 
-const SearchInput: React.FC<SearchInputProps> = ({ search, setSearch }) => {
+interface SearchFormValues {
+  search: string;
+}
+
+const SearchInput: React.FC<SearchInputProps> = ({ onSearchChange }) => {
+  const { register, watch } = useForm<SearchFormValues>({
+    defaultValues: { search: '' },
+  });
+
+  React.useEffect(() => {
+    onSearchChange(watch('search'));
+  }, [watch('search'), onSearchChange]);
+
   return (
     <input
       id="pokemon-search"
       type="text"
-      className="mt-1 block w-full color-red-800 px-4 py-2 border border-gray-300 rounded-md"
+      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md"
       placeholder="Search Pokémon"
-      value={search}
-      onChange={e => setSearch(e.target.value)}
+      {...register('search')}
     />
   );
 };

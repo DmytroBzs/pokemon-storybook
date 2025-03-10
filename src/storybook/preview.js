@@ -1,7 +1,9 @@
 import '../index.css';
 
-export const parameters = {
-  backgrounds: {
-    default: 'light',
+const preview = {
+  parameters: {
+    backgrounds: { default: 'light' },
   },
 };
+
+export default preview;

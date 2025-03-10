@@ -1,53 +1,76 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 
 interface TrainerFormProps {
   onValidationChange: (isValid: boolean) => void;
 }
 
+interface TrainerFormValues {
+  firstName: string;
+  lastName: string;
+}
+
 const TrainerForm: React.FC<TrainerFormProps> = ({ onValidationChange }) => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [error, setError] = useState('');
+  const {
+    register,
 
-  const validateName = (name: string) => /^[a-zA-Z]{2,12}$/.test(name);
+    formState: { errors, isValid },
+  } = useForm<TrainerFormValues>({
+    mode: 'onChange',
+  });
 
-  const handleInputChange = (
-    setter: React.Dispatch<React.SetStateAction<string>>,
-    value: string
-  ) => {
-    setter(value);
-    const isValid = validateName(firstName) && validateName(lastName);
+  React.useEffect(() => {
     onValidationChange(isValid);
-
-    if (!validateName(value)) {
-      setError(
-        'Name and surname must be between 2 and 12 characters long and contain only letters.'
-      );
-    } else {
-      setError('');
-    }
-  };
+  }, [isValid, onValidationChange]);
 
   return (
     <div className="p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-bold text-center mb-2">Trainer Info</h2>
-      <div className="flex gap-4">
-        <input
-          type="text"
-          placeholder="First Name"
-          value={firstName}
-          onChange={e => handleInputChange(setFirstName, e.target.value)}
-          className="border p-2 rounded w-1/2"
-        />
-        <input
-          type="text"
-          placeholder="Last Name"
-          value={lastName}
-          onChange={e => handleInputChange(setLastName, e.target.value)}
-          className="border p-2 rounded w-1/2"
-        />
-      </div>
-      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+      <form className="flex gap-4">
+        <div className="flex flex-col w-1/2">
+          <input
+            type="text"
+            placeholder="First Name"
+            {...register('firstName', {
+              required: 'First name is required',
+              minLength: { value: 2, message: 'Minimum 2 characters' },
+              maxLength: { value: 12, message: 'Maximum 12 characters' },
+              pattern: {
+                value: /^[a-zA-Z]+$/,
+                message: 'Only letters allowed',
+              },
+            })}
+            className="border p-2 rounded"
+          />
+          {errors.firstName && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.firstName.message}
+            </p>
+          )}
+        </div>
+
+        <div className="flex flex-col w-1/2">
+          <input
+            type="text"
+            placeholder="Last Name"
+            {...register('lastName', {
+              required: 'Last name is required',
+              minLength: { value: 2, message: 'Minimum 2 characters' },
+              maxLength: { value: 12, message: 'Maximum 12 characters' },
+              pattern: {
+                value: /^[a-zA-Z]+$/,
+                message: 'Only letters allowed',
+              },
+            })}
+            className="border p-2 rounded"
+          />
+          {errors.lastName && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.lastName.message}
+            </p>
+          )}
+        </div>
+      </form>
     </div>
   );
 };
